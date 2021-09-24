@@ -3,25 +3,28 @@ import Header from './components/Header'
 
 function App() {
   return (
-    <div className='container mx-auto flex items-center flex-col'>
+    <div className='flex items-center flex-col'>
       {/* Header */}
       <Header/>
       {/* App Body */}
-      <div className='flex'>
-          <div className='w-2/12'>
+      <div className=' bg-gray-100 w-full flex-1 '>
+        <div className='flex mx-auto container pt-8'>
+
+          <div className='w-3/12 rounded-lg border p-3 bg-white'>
 {/* Sidebar */}
 Sidebar
           </div>
-          <div className='w-8/12'>
+          <div className='w-6/12 rounded-lg border p-3 bg-white mx-3'>
 {/* Main Content */}
 Main Content
           </div>
           
-          <div className='w-2/12'>
+          <div className='w-3/12 rounded-lg border p-3 bg-white'>
               <div>
                 Feeds
               </div>
           </div>
+        </div>
       </div>
     </div>
   )
