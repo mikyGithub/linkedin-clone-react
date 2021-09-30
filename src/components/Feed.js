@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Feed.css";
 import InputOption from "./InputOption";
 import PhotoIcon from "../icons/PhotoIcon";
@@ -6,12 +6,35 @@ import VideoIcon from "../icons/VideoIcon";
 import EventIcon from "../icons/EventIcon";
 import WriteArticleIcon from "../icons/WriteArticleIcon";
 import Post from "./Post";
+import { db } from "../services/firebase";
+import firebase from "firebase";
 
 function Feed() {
-  const [posts, setPosts] = useState([])
-  
-  const sendPost = (e) => {
+  const [input, setInput] = useState("");
+  const [posts, setPosts] = useState([]);
 
+  // Fires when ever Feed Component Load
+  useEffect(() => {
+    db.collection("posts")
+      .orderBy("timeStamp", "desc")
+      .onSnapshot((snapshot) => {
+        setPosts(
+          snapshot.docs.map((doc) => ({
+            id: doc.id,
+            data: doc.data(),
+          }))
+        );
+      });
+  }, []);
+
+  const sendPost = (e) => {
+    db.collection("posts").add({
+      name: "sonny",
+      description: "test",
+      message: input,
+      photoUrl: "url",
+      timeStamp: firebase.firestore.FieldValue.serverTimestamp(),
+    });
   };
   return (
     <>
@@ -25,6 +48,8 @@ function Feed() {
           <div className="flex-1">
             <form className="flex">
               <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
                 type="text"
                 placeholder="Start a post"
                 className="focus:border-blue-500 focus:shadow-md focus:bg-gray-100 ml-3 py-2 px-4 rounded-full w-full border border-gray-400 outline-none bg-gray-200"
@@ -50,17 +75,15 @@ function Feed() {
         </div>
       </div>
 
-      {posts.map((post)=>{
-        <Post/>
-      })}
-
-      {/* Posts */}
-      <Post
-        name="Ahmedin Mohammed, PhD"
-        description="State Minister at Ministry of Innovation and technology"
-        message="Learn how Elastic's unified approach to security is enabling tomorrow's SOC. Access the full, complimentary report now."
-        photoUrl="https://media-exp1.licdn.com/dms/image/C4D03AQE4ytCW8peZBA/profile-displayphoto-shrink_100_100/0/1621361364710?e=1637798400&v=beta&t=oI3SFV2HgjIFKYBSrD2kXHuDe7782u-S1vPhzUF5g3o"
-      />
+      {posts.map(({ id, data: { name, description, message } }) => (
+        <Post
+          key={id}
+          name={name}
+          description={description}
+          message={message}
+          photoUrl="https://media-exp1.licdn.com/dms/image/C4D03AQE4ytCW8peZBA/profile-displayphoto-shrink_100_100/0/1621361364710?e=1637798400&v=beta&t=oI3SFV2HgjIFKYBSrD2kXHuDe7782u-S1vPhzUF5g3o"
+        />
+      ))}
     </>
   );
 }
